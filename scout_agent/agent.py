@@ -29,7 +29,7 @@ Rules:
 
 root_agent = Agent(
     name="scout_agent",
-    model="gemini-3.5-flash",
+    model="gemini-3.6-flash",
     description="Autonomous local-business lead research agent",
     instruction=INSTRUCTION,
     tools=[
@@ -42,4 +42,4 @@ root_agent = Agent(
 
 
 def make_runner() -> InMemoryRunner:
-    return InMemoryRunner(agent=root_agent)
+    return InMemoryRunner(agent=root_agent, app_name="scout_agent")

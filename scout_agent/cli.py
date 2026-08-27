@@ -29,17 +29,19 @@ def write_csv(leads: list[dict], path: Path) -> None:
 
 async def run_agent_mode(niche: str, city: str) -> None:
     from google.genai import types
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).parent.parent / ".env")
     from .agent import make_runner
 
     runner = make_runner()
-    user_id, session_id = "cli", "cli-session"
-    await runner.session_service.create_session(
-        app_name="scout_agent", user_id=user_id, session_id=session_id)
+    user_id = "cli"
+    sess = await runner.session_service.create_session(
+        app_name="scout_agent", user_id=user_id)
     content = types.Content(
         role="user",
         parts=[types.Part(text=f"Research leads: niche={niche!r}, city={city!r}. "
                                f"Find 10, verify, score, and draft outreach.")])
-    async for event in runner.run_async(user_id=user_id, session_id=session_id,
+    async for event in runner.run_async(user_id=user_id, session_id=sess.id,
                                         new_message=content):
         if event.is_final_response() and event.content and event.content.parts:
             for p in event.content.parts:
